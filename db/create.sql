@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS apartments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    address TEXT NOT NULL,
+    visit_date TIMESTAMP,
+    notes TEXT,
+    rating INTEGER,
+    price REAL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

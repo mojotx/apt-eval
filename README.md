@@ -1,6 +1,7 @@
 # Apartment Evaluation App
 
 A simple Go application for evaluating apartments with CRUD functionality. This application uses:
+
 - [gin-gonic/gin](https://github.com/gin-gonic/gin) for the web server
 - [SQLite](https://www.sqlite.org/) for the database
 - [zerolog](https://github.com/rs/zerolog) for structured logging
@@ -45,7 +46,7 @@ PORT=3000 go run main.go
 
 #### Create an apartment evaluation
 
-```
+```text
 POST /api/apartments
 ```
 
@@ -63,19 +64,19 @@ Request body:
 
 #### Get all apartment evaluations
 
-```
+```text
 GET /api/apartments
 ```
 
 #### Get a specific apartment evaluation
 
-```
+```text
 GET /api/apartments/:id
 ```
 
 #### Update an apartment evaluation
 
-```
+```text
 PUT /api/apartments/:id
 ```
 
@@ -93,13 +94,13 @@ Request body (same format as create):
 
 #### Delete an apartment evaluation
 
-```
+```text
 DELETE /api/apartments/:id
 ```
 
 ### Health Check
 
-```
+```text
 GET /health
 ```
 

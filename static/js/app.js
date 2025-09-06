@@ -181,9 +181,18 @@ async function saveApartment() {
     }
     
     // Collect form data
+    let visitDateValue = document.getElementById('visitDate').value;
+    
+    // Format the date in RFC3339 format if provided
+    if (visitDateValue) {
+        // The datetime-local input returns YYYY-MM-DDThh:mm
+        // We need to append seconds and timezone: YYYY-MM-DDThh:mm:00Z
+        visitDateValue = visitDateValue + ':00Z';
+    }
+    
     const apartmentData = {
         address: addressInput.value.trim(),
-        visit_date: document.getElementById('visitDate').value || null,
+        visit_date: visitDateValue || null,
         price: parseFloat(document.getElementById('price').value) || 0,
         rating: parseInt(document.getElementById('rating').value) || 0,
         notes: document.getElementById('notes').value.trim()

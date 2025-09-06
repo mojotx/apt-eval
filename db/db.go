@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	_ "embed"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -45,22 +46,13 @@ func New(dataDir string) (*DB, error) {
 	return &DB{db}, nil
 }
 
+//go:embed create.sql
+var createTableQuery string
+
 // initSchema creates the necessary tables if they don't exist
 func initSchema(db *sql.DB) error {
-	query := `
-		CREATE TABLE IF NOT EXISTS apartments (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			address TEXT NOT NULL,
-			visit_date TIMESTAMP,
-			notes TEXT,
-			rating INTEGER,
-			price REAL,
-			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-		);
-	`
 
-	_, err := db.Exec(query)
+	_, err := db.Exec(createTableQuery)
 	if err != nil {
 		return fmt.Errorf("failed to create table: %w", err)
 	}
@@ -69,19 +61,16 @@ func initSchema(db *sql.DB) error {
 	return nil
 }
 
+//go:embed insert.sql
+var insertApartmentQuery string
+
 // CreateApartment inserts a new apartment record
 func (db *DB) CreateApartment(apt *models.ApartmentRequest) (*models.Apartment, error) {
-	query := `
-		INSERT INTO apartments (address, visit_date, notes, rating, price, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-		RETURNING id, address, visit_date, notes, rating, price, created_at, updated_at
-	`
-	
 	var apartment models.Apartment
 	err := db.QueryRow(
-		query,
+		insertApartmentQuery,
 		apt.Address,
-		apt.VisitDate,
+		apt.VisitDate.Time,
 		apt.Notes,
 		apt.Rating,
 		apt.Price,
@@ -95,24 +84,22 @@ func (db *DB) CreateApartment(apt *models.ApartmentRequest) (*models.Apartment, 
 		&apartment.CreatedAt,
 		&apartment.UpdatedAt,
 	)
-	
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to create apartment: %w", err)
 	}
-	
+
 	return &apartment, nil
 }
 
+//go:embed get.sql
+var getApartmentQuery string
+
 // GetApartment retrieves an apartment by ID
 func (db *DB) GetApartment(id int64) (*models.Apartment, error) {
-	query := `
-		SELECT id, address, visit_date, notes, rating, price, created_at, updated_at
-		FROM apartments
-		WHERE id = ?
-	`
-	
+
 	var apartment models.Apartment
-	err := db.QueryRow(query, id).Scan(
+	err := db.QueryRow(getApartmentQuery, id).Scan(
 		&apartment.ID,
 		&apartment.Address,
 		&apartment.VisitDate,
@@ -122,31 +109,29 @@ func (db *DB) GetApartment(id int64) (*models.Apartment, error) {
 		&apartment.CreatedAt,
 		&apartment.UpdatedAt,
 	)
-	
+
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 		return nil, fmt.Errorf("failed to get apartment: %w", err)
 	}
-	
+
 	return &apartment, nil
 }
 
+//go:embed list.sql
+var listApartmentsQuery string
+
 // ListApartments retrieves all apartments
 func (db *DB) ListApartments() ([]models.Apartment, error) {
-	query := `
-		SELECT id, address, visit_date, notes, rating, price, created_at, updated_at
-		FROM apartments
-		ORDER BY created_at DESC
-	`
-	
-	rows, err := db.Query(query)
+
+	rows, err := db.Query(listApartmentsQuery)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list apartments: %w", err)
 	}
 	defer rows.Close()
-	
+
 	apartments := []models.Apartment{}
 	for rows.Next() {
 		var apt models.Apartment
@@ -164,11 +149,11 @@ func (db *DB) ListApartments() ([]models.Apartment, error) {
 		}
 		apartments = append(apartments, apt)
 	}
-	
+
 	if err = rows.Err(); err != nil {
 		return nil, fmt.Errorf("error during row iteration: %w", err)
 	}
-	
+
 	return apartments, nil
 }
 
@@ -180,12 +165,12 @@ func (db *DB) UpdateApartment(id int64, apt *models.ApartmentRequest) (*models.A
 		WHERE id = ?
 		RETURNING id, address, visit_date, notes, rating, price, created_at, updated_at
 	`
-	
+
 	var apartment models.Apartment
 	err := db.QueryRow(
 		query,
 		apt.Address,
-		apt.VisitDate,
+		apt.VisitDate.Time,
 		apt.Notes,
 		apt.Rating,
 		apt.Price,
@@ -200,34 +185,36 @@ func (db *DB) UpdateApartment(id int64, apt *models.ApartmentRequest) (*models.A
 		&apartment.CreatedAt,
 		&apartment.UpdatedAt,
 	)
-	
+
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 		return nil, fmt.Errorf("failed to update apartment: %w", err)
 	}
-	
+
 	return &apartment, nil
 }
 
+//go:embed delete.sql
+var deleteApartmentQuery string
+
 // DeleteApartment removes an apartment by ID
 func (db *DB) DeleteApartment(id int64) error {
-	query := "DELETE FROM apartments WHERE id = ?"
-	
-	result, err := db.Exec(query, id)
+
+	result, err := db.Exec(deleteApartmentQuery, id)
 	if err != nil {
 		return fmt.Errorf("failed to delete apartment: %w", err)
 	}
-	
+
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return fmt.Errorf("failed to get rows affected: %w", err)
 	}
-	
+
 	if rowsAffected == 0 {
 		return fmt.Errorf("apartment with id %d not found", id)
 	}
-	
+
 	return nil
 }
