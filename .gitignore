@@ -23,3 +23,10 @@ data/
 
 # OS files
 .DS_Store
+
+# TLS Certificates - never commit these to version control
+*.crt
+*.key
+*.pem
+*.p12
+*.pfx
