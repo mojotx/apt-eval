@@ -42,6 +42,10 @@ The server will start on port 8080 by default. You can change the port with the 
 PORT=3000 go run main.go
 ```
 
+### Landing Page
+
+There is a landing page:  [http://localhost:8080/static/](http://localhost:8080/static/)
+
 ### API Endpoints
 
 #### Create an apartment evaluation
