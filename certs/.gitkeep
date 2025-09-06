@@ -1,0 +1,2 @@
+# This file exists to ensure Git tracks the certs directory even when it's empty.
+# The actual certificate files (*.crt, *.key, etc.) should be added to .gitignore.
