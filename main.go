@@ -25,7 +25,7 @@ func main() {
 
 	// Get data directory - use ./data as default
 	dataDir := getEnv("DATA_DIR", filepath.Join(".", "data"))
-	
+
 	// Setup database
 	database, err := db.New(dataDir)
 	if err != nil {
@@ -35,19 +35,19 @@ func main() {
 
 	// Setup router
 	router := gin.Default()
-	
+
 	// Serve static files
 	router.Static("/static", "./static")
-	
+
 	// Root route to serve the main HTML page
 	router.GET("/", func(c *gin.Context) {
 		c.File("./static/index.html")
 	})
-	
+
 	// Setup API routes
 	apartmentHandler := handlers.NewApartmentHandler(database)
 	apartmentHandler.RegisterRoutes(router)
-	
+
 	// Add health check endpoint
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
@@ -61,7 +61,7 @@ func main() {
 	httpPort := getEnv("HTTP_PORT", "8080")
 	certFile := getEnv("CERT_FILE", "./certs/wildcard.crt")
 	keyFile := getEnv("KEY_FILE", "./certs/wildcard.key")
-	
+
 	// Configure TLS settings for HTTPS server
 	srv := &http.Server{
 		Addr:      ":" + httpsPort,
@@ -107,13 +107,13 @@ func main() {
 	// Give servers 5 seconds to shutdown gracefully
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	
+
 	// Shutdown HTTPS server
 	log.Info().Msg("Shutting down HTTPS server...")
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Error().Err(err).Msg("HTTPS server forced to shutdown")
 	}
-	
+
 	// Shutdown HTTP server
 	log.Info().Msg("Shutting down HTTP server...")
 	if err := httpSrv.Shutdown(ctx); err != nil {
