@@ -74,6 +74,10 @@ func (db *DB) CreateApartment(apt *models.ApartmentRequest) (*models.Apartment, 
 		apt.Notes,
 		apt.Rating,
 		apt.Price,
+		apt.Floor,
+		apt.IsGated,
+		apt.HasGarage,
+		apt.HasLaundry,
 	).Scan(
 		&apartment.ID,
 		&apartment.Address,
@@ -81,6 +85,10 @@ func (db *DB) CreateApartment(apt *models.ApartmentRequest) (*models.Apartment, 
 		&apartment.Notes,
 		&apartment.Rating,
 		&apartment.Price,
+		&apartment.Floor,
+		&apartment.IsGated,
+		&apartment.HasGarage,
+		&apartment.HasLaundry,
 		&apartment.CreatedAt,
 		&apartment.UpdatedAt,
 	)
@@ -106,6 +114,10 @@ func (db *DB) GetApartment(id int64) (*models.Apartment, error) {
 		&apartment.Notes,
 		&apartment.Rating,
 		&apartment.Price,
+		&apartment.Floor,
+		&apartment.IsGated,
+		&apartment.HasGarage,
+		&apartment.HasLaundry,
 		&apartment.CreatedAt,
 		&apartment.UpdatedAt,
 	)
@@ -142,6 +154,10 @@ func (db *DB) ListApartments() ([]models.Apartment, error) {
 			&apt.Notes,
 			&apt.Rating,
 			&apt.Price,
+			&apt.Floor,
+			&apt.IsGated,
+			&apt.HasGarage,
+			&apt.HasLaundry,
 			&apt.CreatedAt,
 			&apt.UpdatedAt,
 		); err != nil {
@@ -161,9 +177,11 @@ func (db *DB) ListApartments() ([]models.Apartment, error) {
 func (db *DB) UpdateApartment(id int64, apt *models.ApartmentRequest) (*models.Apartment, error) {
 	query := `
 		UPDATE apartments
-		SET address = ?, visit_date = ?, notes = ?, rating = ?, price = ?, updated_at = CURRENT_TIMESTAMP
+		SET address = ?, visit_date = ?, notes = ?, rating = ?, price = ?, 
+		    floor = ?, is_gated = ?, has_garage = ?, has_laundry = ?, 
+		    updated_at = CURRENT_TIMESTAMP
 		WHERE id = ?
-		RETURNING id, address, visit_date, notes, rating, price, created_at, updated_at
+		RETURNING id, address, visit_date, notes, rating, price, floor, is_gated, has_garage, has_laundry, created_at, updated_at
 	`
 
 	var apartment models.Apartment
@@ -174,6 +192,10 @@ func (db *DB) UpdateApartment(id int64, apt *models.ApartmentRequest) (*models.A
 		apt.Notes,
 		apt.Rating,
 		apt.Price,
+		apt.Floor,
+		apt.IsGated,
+		apt.HasGarage,
+		apt.HasLaundry,
 		id,
 	).Scan(
 		&apartment.ID,
@@ -182,6 +204,10 @@ func (db *DB) UpdateApartment(id int64, apt *models.ApartmentRequest) (*models.A
 		&apartment.Notes,
 		&apartment.Rating,
 		&apartment.Price,
+		&apartment.Floor,
+		&apartment.IsGated,
+		&apartment.HasGarage,
+		&apartment.HasLaundry,
 		&apartment.CreatedAt,
 		&apartment.UpdatedAt,
 	)

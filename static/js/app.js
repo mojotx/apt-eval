@@ -115,11 +115,17 @@ function renderApartmentsList() {
             <div class="card apartment-card">
                 <div class="card-body">
                     <h5 class="card-title">${escapeHtml(apartment.address)}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">$${apartment.price.toFixed(2)} | Visited: ${visitDate}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">$${apartment.price.toFixed(2)} | Floor: ${apartment.floor || 1}</h6>
                     <div class="mb-2">
                         ${renderStarRating(apartment.rating)}
                     </div>
+                    <div class="mb-2 small">
+                        <span class="badge ${apartment.is_gated ? 'bg-success' : 'bg-light text-dark border'}">Gated</span>
+                        <span class="badge ${apartment.has_garage ? 'bg-success' : 'bg-light text-dark border'}">Garage</span>
+                        <span class="badge ${apartment.has_laundry ? 'bg-success' : 'bg-light text-dark border'}">Laundry</span>
+                    </div>
                     <p class="card-text">${apartment.notes ? escapeHtml(apartment.notes.substring(0, 100)) + (apartment.notes.length > 100 ? '...' : '') : 'No notes'}</p>
+                    <div class="text-muted small mb-2">Visited: ${visitDate}</div>
                     <button class="btn btn-sm btn-outline-primary view-details" data-id="${apartment.id}">View Details</button>
                 </div>
             </div>
@@ -155,6 +161,28 @@ function showApartmentDetails(id) {
                 </div>
                 <div class="col-6">
                     <strong>Visit Date:</strong> ${visitDate}
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <strong>Floor:</strong> ${apartment.floor || 1}
+                </div>
+                <div class="col-6">
+                    <strong>Features:</strong>
+                    <ul class="list-unstyled">
+                        <li>
+                            <i class="bi ${apartment.is_gated ? 'bi-check-circle-fill text-success' : 'bi-x-circle text-muted'}"></i>
+                            Gated Community
+                        </li>
+                        <li>
+                            <i class="bi ${apartment.has_garage ? 'bi-check-circle-fill text-success' : 'bi-x-circle text-muted'}"></i>
+                            Garage
+                        </li>
+                        <li>
+                            <i class="bi ${apartment.has_laundry ? 'bi-check-circle-fill text-success' : 'bi-x-circle text-muted'}"></i>
+                            In-unit Laundry
+                        </li>
+                    </ul>
                 </div>
             </div>
             <div class="mb-3">
@@ -195,7 +223,11 @@ async function saveApartment() {
         visit_date: visitDateValue || null,
         price: parseFloat(document.getElementById('price').value) || 0,
         rating: parseInt(document.getElementById('rating').value) || 0,
-        notes: document.getElementById('notes').value.trim()
+        notes: document.getElementById('notes').value.trim(),
+        floor: parseInt(document.getElementById('floor').value) || 1,
+        is_gated: document.getElementById('isGated').checked,
+        has_garage: document.getElementById('hasGarage').checked,
+        has_laundry: document.getElementById('hasLaundry').checked
     };
 
     try {
@@ -267,6 +299,10 @@ function resetForm() {
     document.getElementById('visitDate').value = '';
     document.getElementById('price').value = '';
     document.getElementById('notes').value = '';
+    document.getElementById('floor').value = '1';
+    document.getElementById('isGated').checked = false;
+    document.getElementById('hasGarage').checked = false;
+    document.getElementById('hasLaundry').checked = false;
     setRating(0);
     currentApartmentId = null;
 }
@@ -286,6 +322,10 @@ function populateForm(apartment) {
 
     document.getElementById('price').value = apartment.price;
     document.getElementById('notes').value = apartment.notes || '';
+    document.getElementById('floor').value = apartment.floor || 1;
+    document.getElementById('isGated').checked = apartment.is_gated || false;
+    document.getElementById('hasGarage').checked = apartment.has_garage || false;
+    document.getElementById('hasLaundry').checked = apartment.has_laundry || false;
     setRating(apartment.rating);
 
     currentApartmentId = apartment.id;
