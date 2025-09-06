@@ -36,15 +36,28 @@ go mod download
 go run main.go
 ```
 
-The server will start on port 8080 by default. You can change the port with the `PORT` environment variable:
+The server will start on port 8443 by default with HTTPS enabled. You can change the port with the `PORT` environment variable:
 
 ```bash
 PORT=3000 go run main.go
 ```
 
+### TLS Configuration
+
+The application supports HTTPS using TLS. By default, it looks for certificate files in the `./certs` directory:
+
+1. Place your wildcard certificate at `./certs/wildcard.crt`
+2. Place your private key at `./certs/wildcard.key`
+
+Or specify custom paths using environment variables:
+
+```bash
+CERT_FILE=/path/to/your/certificate.crt KEY_FILE=/path/to/your/private.key go run main.go
+```
+
 ### Landing Page
 
-There is a landing page:  [http://localhost:8080/static/](http://localhost:8080/static/)
+Access the web interface at: [https://localhost:8443/](https://localhost:8443/)
 
 ### API Endpoints
 
@@ -110,8 +123,11 @@ GET /health
 
 ## Environment Variables
 
-- `PORT`: Server port (default: 8080)
+- `PORT`: HTTPS server port (default: 8443)
+- `HTTP_PORT`: HTTP server port for redirects (default: 8080)
 - `DATA_DIR`: Directory for SQLite database (default: ./data)
+- `CERT_FILE`: Path to TLS certificate file (default: ./certs/wildcard.crt)
+- `KEY_FILE`: Path to TLS private key file (default: ./certs/wildcard.key)
 
 ## Building for Production
 
