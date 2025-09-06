@@ -32,13 +32,13 @@ function setupEventListeners() {
             const value = parseInt(e.target.getAttribute('data-value'));
             setRating(value);
         });
-        
+
         star.addEventListener('mouseenter', (e) => {
             const value = parseInt(e.target.getAttribute('data-value'));
             highlightStars(value);
         });
     });
-    
+
     document.getElementById('ratingStars').addEventListener('mouseleave', () => {
         const currentRating = parseInt(document.getElementById('rating').value) || 0;
         highlightStars(currentRating);
@@ -74,17 +74,17 @@ function setupEventListeners() {
 async function loadApartments() {
     loadingIndicatorEl.classList.remove('d-none');
     emptyStateEl.classList.add('d-none');
-    
+
     try {
         const response = await fetch('/api/apartments');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         apartmentData = await response.json();
-        
+
         renderApartmentsList();
-        
+
         if (apartmentData.length === 0) {
             emptyStateEl.classList.remove('d-none');
         }
@@ -104,13 +104,13 @@ function renderApartmentsList() {
             child.remove();
         }
     });
-    
+
     apartmentData.forEach(apartment => {
         const col = document.createElement('div');
         col.className = 'col-md-4';
-        
+
         const visitDate = apartment.visit_date ? new Date(apartment.visit_date).toLocaleDateString() : 'Not visited';
-        
+
         col.innerHTML = `
             <div class="card apartment-card">
                 <div class="card-body">
@@ -124,9 +124,9 @@ function renderApartmentsList() {
                 </div>
             </div>
         `;
-        
+
         apartmentsList.appendChild(col);
-        
+
         // Add event listener to the view details button
         const detailsBtn = col.querySelector('.view-details');
         detailsBtn.addEventListener('click', () => showApartmentDetails(apartment.id));
@@ -137,13 +137,13 @@ function renderApartmentsList() {
 function showApartmentDetails(id) {
     const apartment = apartmentData.find(a => a.id === id);
     if (!apartment) return;
-    
+
     currentApartmentId = id;
-    
-    const visitDate = apartment.visit_date 
-        ? new Date(apartment.visit_date).toLocaleString() 
+
+    const visitDate = apartment.visit_date
+        ? new Date(apartment.visit_date).toLocaleString()
         : 'Not visited';
-    
+
     const detailsContent = document.getElementById('detailsContent');
     detailsContent.innerHTML = `
         <div class="apartment-details">
@@ -167,7 +167,7 @@ function showApartmentDetails(id) {
             </div>
         </div>
     `;
-    
+
     detailsModal.show();
 }
 
@@ -179,17 +179,17 @@ async function saveApartment() {
         showAlert('Address is required', 'warning');
         return;
     }
-    
+
     // Collect form data
     let visitDateValue = document.getElementById('visitDate').value;
-    
+
     // Format the date in RFC3339 format if provided
     if (visitDateValue) {
         // The datetime-local input returns YYYY-MM-DDThh:mm
         // We need to append seconds and timezone: YYYY-MM-DDThh:mm:00Z
         visitDateValue = visitDateValue + ':00Z';
     }
-    
+
     const apartmentData = {
         address: addressInput.value.trim(),
         visit_date: visitDateValue || null,
@@ -197,17 +197,17 @@ async function saveApartment() {
         rating: parseInt(document.getElementById('rating').value) || 0,
         notes: document.getElementById('notes').value.trim()
     };
-    
+
     try {
         let url = '/api/apartments';
         let method = 'POST';
-        
+
         // If editing an existing apartment
         if (currentApartmentId) {
             url += `/${currentApartmentId}`;
             method = 'PUT';
         }
-        
+
         const response = await fetch(url, {
             method: method,
             headers: {
@@ -215,21 +215,21 @@ async function saveApartment() {
             },
             body: JSON.stringify(apartmentData)
         });
-        
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         // Close the modal and reload apartments
         apartmentModal.hide();
         await loadApartments();
-        
+
         // Show success message
         showAlert(
-            `Apartment ${currentApartmentId ? 'updated' : 'added'} successfully!`, 
+            `Apartment ${currentApartmentId ? 'updated' : 'added'} successfully!`,
             'success'
         );
-        
+
     } catch (error) {
         console.error('Error saving apartment:', error);
         showAlert(`Failed to ${currentApartmentId ? 'update' : 'add'} apartment. Please try again.`, 'danger');
@@ -242,18 +242,18 @@ async function deleteApartment(id) {
         const response = await fetch(`/api/apartments/${id}`, {
             method: 'DELETE'
         });
-        
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         // Close the modal and reload apartments
         deleteModal.hide();
         await loadApartments();
-        
+
         // Show success message
         showAlert('Apartment deleted successfully!', 'success');
-        
+
     } catch (error) {
         console.error('Error deleting apartment:', error);
         showAlert('Failed to delete apartment. Please try again.', 'danger');
@@ -274,7 +274,7 @@ function resetForm() {
 function populateForm(apartment) {
     document.getElementById('apartmentId').value = apartment.id;
     document.getElementById('address').value = apartment.address;
-    
+
     // Format date for datetime-local input
     if (apartment.visit_date) {
         const date = new Date(apartment.visit_date);
@@ -283,11 +283,11 @@ function populateForm(apartment) {
     } else {
         document.getElementById('visitDate').value = '';
     }
-    
+
     document.getElementById('price').value = apartment.price;
     document.getElementById('notes').value = apartment.notes || '';
     setRating(apartment.rating);
-    
+
     currentApartmentId = apartment.id;
 }
 
@@ -323,9 +323,9 @@ function showAlert(message, type) {
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     `;
-    
+
     alertContainer.appendChild(alert);
-    
+
     // Auto-dismiss after 5 seconds
     setTimeout(() => {
         alert.classList.remove('show');
