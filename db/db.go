@@ -177,8 +177,8 @@ func (db *DB) ListApartments() ([]models.Apartment, error) {
 func (db *DB) UpdateApartment(id int64, apt *models.ApartmentRequest) (*models.Apartment, error) {
 	query := `
 		UPDATE apartments
-		SET address = ?, visit_date = ?, notes = ?, rating = ?, price = ?, 
-		    floor = ?, is_gated = ?, has_garage = ?, has_laundry = ?, 
+		SET address = ?, visit_date = ?, notes = ?, rating = ?, price = ?,
+		    floor = ?, is_gated = ?, has_garage = ?, has_laundry = ?,
 		    updated_at = CURRENT_TIMESTAMP
 		WHERE id = ?
 		RETURNING id, address, visit_date, notes, rating, price, floor, is_gated, has_garage, has_laundry, created_at, updated_at

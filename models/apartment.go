@@ -7,18 +7,18 @@ import (
 
 // Apartment represents an apartment evaluation record
 type Apartment struct {
-	ID          int64     `json:"id"`
-	Address     string    `json:"address" binding:"required"`
-	VisitDate   time.Time `json:"visit_date"`
-	Notes       string    `json:"notes"`
-	Rating      int       `json:"rating"`      // Rating from 1-5
-	Price       float64   `json:"price"`       // Monthly rent/price
-	Floor       uint      `json:"floor"`       // Floor number
-	IsGated     bool      `json:"is_gated"`    // Is the apartment complex gated
-	HasGarage   bool      `json:"has_garage"`  // Has a garage
-	HasLaundry  bool      `json:"has_laundry"` // Has in-unit laundry
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	ID         int64     `json:"id"`
+	Address    string    `json:"address" binding:"required"`
+	VisitDate  time.Time `json:"visit_date"`
+	Notes      string    `json:"notes"`
+	Rating     int       `json:"rating"`      // Rating from 1-5
+	Price      float64   `json:"price"`       // Monthly rent/price
+	Floor      uint      `json:"floor"`       // Floor number
+	IsGated    bool      `json:"is_gated"`    // Is the apartment complex gated
+	HasGarage  bool      `json:"has_garage"`  // Has a garage
+	HasLaundry bool      `json:"has_laundry"` // Has in-unit laundry
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
 
 // CustomTime is a wrapper around time.Time to handle various date formats
@@ -57,13 +57,13 @@ func (ct *CustomTime) UnmarshalJSON(b []byte) error {
 
 // ApartmentRequest is used for creating/updating an apartment record
 type ApartmentRequest struct {
-	Address     string     `json:"address" binding:"required"`
-	VisitDate   CustomTime `json:"visit_date"`
-	Notes       string     `json:"notes"`
-	Rating      int        `json:"rating"`
-	Price       float64    `json:"price"`
-	Floor       uint       `json:"floor"`       // Floor number
-	IsGated     bool       `json:"is_gated"`    // Is the apartment complex gated
-	HasGarage   bool       `json:"has_garage"`  // Has a garage
-	HasLaundry  bool       `json:"has_laundry"` // Has in-unit laundry
+	Address    string     `json:"address" binding:"required"`
+	VisitDate  CustomTime `json:"visit_date"`
+	Notes      string     `json:"notes"`
+	Rating     int        `json:"rating"`
+	Price      float64    `json:"price"`
+	Floor      uint       `json:"floor"`       // Floor number
+	IsGated    bool       `json:"is_gated"`    // Is the apartment complex gated
+	HasGarage  bool       `json:"has_garage"`  // Has a garage
+	HasLaundry bool       `json:"has_laundry"` // Has in-unit laundry
 }
